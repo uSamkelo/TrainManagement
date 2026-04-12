@@ -1,0 +1,61 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "TrainTrackingService",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build-train-tracking",
+      "program": "${workspaceFolder}/api/TrainTrackingService/bin/Debug/net10.0/TrainTrackingService.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/api/TrainTrackingService",
+      "env": { "ASPNETCORE_ENVIRONMENT": "Development" },
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "UserManagementService",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build-user-management",
+      "program": "${workspaceFolder}/api/UserManagementService/bin/Debug/net10.0/UserManagementService.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/api/UserManagementService",
+      "env": { "ASPNETCORE_ENVIRONMENT": "Development" },
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "PaymentService",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build-payment",
+      "program": "${workspaceFolder}/api/PaymentService/bin/Debug/net10.0/PaymentService.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/api/PaymentService",
+      "env": { "ASPNETCORE_ENVIRONMENT": "Development" },
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "TicketQRService",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build-ticket-qr",
+      "program": "${workspaceFolder}/api/TicketQRService/bin/Debug/net10.0/TicketQRService.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/api/TicketQRService",
+      "env": { "ASPNETCORE_ENVIRONMENT": "Development" },
+      "console": "integratedTerminal"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "All Services",
+      "configurations": [
+        "TrainTrackingService",
+        "UserManagementService",
+        "PaymentService",
+        "TicketQRService"
+      ],
+      "stopAll": true
+    }
+  ]
+}

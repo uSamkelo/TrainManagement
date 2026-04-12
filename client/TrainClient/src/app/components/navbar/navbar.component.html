@@ -1,0 +1,49 @@
+<nav class="navbar">
+  <div class="nav-brand" routerLink="/dashboard">
+    <span class="brand-icon">🚆</span>
+    <span class="brand-text">Metrorail</span>
+  </div>
+
+  <button class="hamburger" (click)="toggleMenu()" [class.open]="menuOpen">
+    <span></span><span></span><span></span>
+  </button>
+
+  <div class="nav-links" [class.open]="menuOpen">
+    <a routerLink="/dashboard" routerLinkActive="active" (click)="menuOpen=false">
+      <span class="nav-icon">📍</span> Live Map
+    </a>
+
+    <ng-container *ngIf="auth.isLoggedIn">
+      <a routerLink="/tickets" routerLinkActive="active" (click)="menuOpen=false">
+        <span class="nav-icon">🎫</span> Buy Tickets
+      </a>
+      <a routerLink="/my-tickets" routerLinkActive="active" (click)="menuOpen=false">
+        <span class="nav-icon">📋</span> My Tickets
+      </a>
+    </ng-container>
+
+    <ng-container *ngIf="auth.hasRole('Admin', 'StationStaff')">
+      <a routerLink="/admin/users" routerLinkActive="active" (click)="menuOpen=false">
+        <span class="nav-icon">👥</span> Users
+      </a>
+    </ng-container>
+
+    <div class="nav-spacer"></div>
+
+    <div class="nav-user" *ngIf="auth.isLoggedIn">
+      <div class="user-badge" [attr.data-role]="auth.currentUser?.role">
+        {{ auth.currentUser?.firstName?.charAt(0) }}{{ auth.currentUser?.lastName?.charAt(0) }}
+      </div>
+      <div class="user-info">
+        <span class="user-name">{{ auth.currentUser?.firstName }} {{ auth.currentUser?.lastName }}</span>
+        <span class="user-role">{{ auth.currentUser?.role }}</span>
+      </div>
+      <button class="btn-logout" (click)="logout()">Sign Out</button>
+    </div>
+
+    <div class="nav-auth" *ngIf="!auth.isLoggedIn">
+      <a class="btn-nav" routerLink="/login" (click)="menuOpen=false">Sign In</a>
+      <a class="btn-nav btn-nav-primary" routerLink="/register" (click)="menuOpen=false">Register</a>
+    </div>
+  </div>
+</nav>

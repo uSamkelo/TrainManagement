@@ -1,0 +1,75 @@
+<div class="admin-container">
+  <h1>👥 User Management</h1>
+
+  <!-- Role stats -->
+  <div class="role-stats">
+    <div *ngFor="let role of roles" class="role-stat" [style.borderLeftColor]="roleColors[role]"
+         [class.active]="filterRole === role" (click)="filterRole = filterRole === role ? '' : role">
+      <span class="stat-icon">{{ roleIcons[role] }}</span>
+      <div>
+        <div class="stat-count">{{ getRoleCount(role) }}</div>
+        <div class="stat-label">{{ role === 'StationStaff' ? 'Station Staff' : role + 's' }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search -->
+  <div class="search-bar">
+    <input type="text" [(ngModel)]="searchTerm" placeholder="Search users by name or email...">
+    <span class="result-count">{{ filteredUsers.length }} users</span>
+  </div>
+
+  <div class="loading" *ngIf="loading">Loading...</div>
+  <div class="error-banner" *ngIf="error">⚠️ {{ error }}</div>
+
+  <!-- User table -->
+  <div class="user-table" *ngIf="!loading">
+    <div class="table-header">
+      <span class="col-user">User</span>
+      <span class="col-role">Role</span>
+      <span class="col-details">Details</span>
+      <span class="col-status">Status</span>
+      <span class="col-actions" *ngIf="auth.isAdmin">Actions</span>
+    </div>
+
+    <div *ngFor="let user of filteredUsers" class="table-row">
+      <div class="col-user">
+        <div class="user-avatar" [style.backgroundColor]="roleColors[user.role]">
+          {{ user.firstName.charAt(0) }}{{ user.lastName.charAt(0) }}
+        </div>
+        <div>
+          <div class="user-name">{{ user.firstName }} {{ user.lastName }}</div>
+          <div class="user-email">{{ user.email }}</div>
+        </div>
+      </div>
+
+      <div class="col-role">
+        <span class="role-badge" [style.backgroundColor]="roleColors[user.role] + '20'" [style.color]="roleColors[user.role]">
+          {{ roleIcons[user.role] }} {{ user.role }}
+        </span>
+      </div>
+
+      <div class="col-details">
+        <span *ngIf="user.employeeId" class="detail-tag">ID: {{ user.employeeId }}</span>
+        <span *ngIf="user.assignedStationId" class="detail-tag">📍 Station {{ user.assignedStationId }}</span>
+        <span *ngIf="user.assignedTrainId" class="detail-tag">🚂 {{ user.assignedTrainId }}</span>
+      </div>
+
+      <div class="col-status">
+        <span class="status-dot" [class.active]="user.isActive" [class.inactive]="!user.isActive"></span>
+        {{ user.isActive ? 'Active' : 'Inactive' }}
+      </div>
+
+      <div class="col-actions" *ngIf="auth.isAdmin">
+        <button class="btn-deactivate" *ngIf="user.isActive && user.id !== auth.currentUser?.id"
+                (click)="deactivateUser(user)">
+          Deactivate
+        </button>
+      </div>
+    </div>
+
+    <div class="empty-state" *ngIf="filteredUsers.length === 0">
+      No users found matching your criteria.
+    </div>
+  </div>
+</div>

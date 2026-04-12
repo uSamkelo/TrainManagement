@@ -1,0 +1,37 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build-train-tracking",
+      "command": "dotnet",
+      "type": "process",
+      "args": ["build", "${workspaceFolder}/api/TrainTrackingService/TrainTrackingService.csproj", "/property:GenerateFullPaths=true", "/consoleloggerparameters:NoSummary;ForceNoAlign"],
+      "problemMatcher": "$msCompile",
+      "presentation": { "reveal": "silent" }
+    },
+    {
+      "label": "build-user-management",
+      "command": "dotnet",
+      "type": "process",
+      "args": ["build", "${workspaceFolder}/api/UserManagementService/UserManagementService.csproj", "/property:GenerateFullPaths=true", "/consoleloggerparameters:NoSummary;ForceNoAlign"],
+      "problemMatcher": "$msCompile",
+      "presentation": { "reveal": "silent" }
+    },
+    {
+      "label": "build-payment",
+      "command": "dotnet",
+      "type": "process",
+      "args": ["build", "${workspaceFolder}/api/PaymentService/PaymentService.csproj", "/property:GenerateFullPaths=true", "/consoleloggerparameters:NoSummary;ForceNoAlign"],
+      "problemMatcher": "$msCompile",
+      "presentation": { "reveal": "silent" }
+    },
+    {
+      "label": "build-ticket-qr",
+      "command": "dotnet",
+      "type": "process",
+      "args": ["build", "${workspaceFolder}/api/TicketQRService/TicketQRService.csproj", "/property:GenerateFullPaths=true", "/consoleloggerparameters:NoSummary;ForceNoAlign"],
+      "problemMatcher": "$msCompile",
+      "presentation": { "reveal": "silent" }
+    }
+  ]
+}

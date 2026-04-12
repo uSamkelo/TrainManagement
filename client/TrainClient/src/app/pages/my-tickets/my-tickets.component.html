@@ -1,0 +1,75 @@
+<div class="my-tickets-container">
+  <div class="page-header">
+    <h1>📋 My Tickets</h1>
+    <a routerLink="/tickets" class="btn-buy">+ Buy New Ticket</a>
+  </div>
+
+  <!-- Filter tabs -->
+  <div class="filter-tabs">
+    <button [class.active]="filter === 'all'" (click)="filter = 'all'">All ({{ tickets.length }})</button>
+    <button [class.active]="filter === 'active'" (click)="filter = 'active'">Active</button>
+    <button [class.active]="filter === 'expired'" (click)="filter = 'expired'">Past</button>
+  </div>
+
+  <div class="loading" *ngIf="loading">Loading tickets...</div>
+  <div class="error-banner" *ngIf="error">⚠️ {{ error }}</div>
+
+  <div class="empty-state" *ngIf="!loading && filteredTickets.length === 0">
+    <p>🎫 No tickets found</p>
+    <a routerLink="/tickets">Purchase your first ticket</a>
+  </div>
+
+  <!-- Ticket List -->
+  <div class="ticket-list">
+    <div *ngFor="let ticket of filteredTickets"
+         class="ticket-card"
+         [class.expanded]="selectedTicket?.id === ticket.id"
+         (click)="viewTicket(ticket)">
+      <div class="ticket-main">
+        <div class="ticket-type-icon">{{ getTypeIcon(ticket.type) }}</div>
+        <div class="ticket-info">
+          <div class="ticket-route">{{ ticket.routeName }}</div>
+          <div class="ticket-journey">{{ ticket.fromStation }} → {{ ticket.toStation }}</div>
+        </div>
+        <div class="ticket-meta">
+          <span class="ticket-status" [style.backgroundColor]="getStatusColor(ticket.status)">
+            {{ ticket.status }}
+          </span>
+          <span class="ticket-price">R{{ ticket.price | number:'1.2-2' }}</span>
+        </div>
+      </div>
+
+      <!-- Expanded details -->
+      <div class="ticket-details" *ngIf="selectedTicket?.id === ticket.id">
+        <div class="detail-grid">
+          <div class="detail-item">
+            <span class="detail-label">Type</span>
+            <span class="detail-value">{{ ticket.type }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Valid From</span>
+            <span class="detail-value">{{ ticket.validFrom | date:'medium' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Valid Until</span>
+            <span class="detail-value">{{ ticket.validUntil | date:'medium' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Purchased</span>
+            <span class="detail-value">{{ ticket.createdAt | date:'medium' }}</span>
+          </div>
+        </div>
+
+        <!-- QR Code -->
+        <div class="qr-section" *ngIf="ticket.qrCode">
+          <img [src]="'data:image/png;base64,' + ticket.qrCode" alt="Ticket QR Code" class="qr-image">
+          <p class="qr-hint">Show this code for validation</p>
+        </div>
+
+        <button class="btn-cancel" *ngIf="isValid(ticket)" (click)="cancelTicket(ticket.id); $event.stopPropagation()">
+          Cancel & Refund
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

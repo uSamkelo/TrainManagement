@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { TrainPositionService } from '../services/train-position.service';
 import { SignalRService } from '../services/signal-r.service';
 import * as L from 'leaflet';
@@ -13,7 +13,7 @@ import { takeUntil, switchMap } from 'rxjs/operators';
   selector: 'app-train-position',
   templateUrl: './train-position.component.html',
   standalone: true,
-  imports: [HttpClientModule, CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule],
   styleUrls: ['./train-position.component.css'],
 })
 export class TrainPositionComponent implements OnInit, OnDestroy {

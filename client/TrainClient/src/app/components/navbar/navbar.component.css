@@ -1,0 +1,239 @@
+.navbar {
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  padding: 0 24px;
+  height: 60px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  color: white;
+  margin-right: 32px;
+}
+
+.brand-icon {
+  font-size: 28px;
+}
+
+.brand-text {
+  font-size: 18px;
+  font-weight: 700;
+  color: white;
+  letter-spacing: 0.5px;
+}
+
+/* Hamburger */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  margin-left: auto;
+}
+
+.hamburger span {
+  width: 24px;
+  height: 2px;
+  background: white;
+  transition: all 0.3s;
+  border-radius: 1px;
+}
+
+.hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+.hamburger.open span:nth-child(2) { opacity: 0; }
+.hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+/* Links */
+.nav-links {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  gap: 4px;
+}
+
+.nav-links a {
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.nav-links a:hover {
+  color: white;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.nav-links a.active {
+  color: white;
+  background: rgba(102, 126, 234, 0.3);
+}
+
+.nav-icon {
+  font-size: 16px;
+}
+
+.nav-spacer {
+  flex: 1;
+}
+
+/* User section */
+.nav-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: 16px;
+  padding-left: 16px;
+  border-left: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.user-badge {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #667eea;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.user-badge[data-role="Admin"] { background: #e74c3c; }
+.user-badge[data-role="Driver"] { background: #e67e22; }
+.user-badge[data-role="StationStaff"] { background: #27ae60; }
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-name {
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.user-role {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 11px;
+}
+
+.btn-logout {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-left: 8px;
+}
+
+.btn-logout:hover {
+  background: rgba(231, 76, 60, 0.2);
+  border-color: #e74c3c;
+  color: #e74c3c;
+}
+
+/* Auth buttons */
+.nav-auth {
+  display: flex;
+  gap: 8px;
+  margin-left: 16px;
+}
+
+.btn-nav {
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  padding: 7px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+}
+
+.btn-nav:hover {
+  color: white;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.btn-nav-primary {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white !important;
+  border: none;
+}
+
+.btn-nav-primary:hover {
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  background: linear-gradient(135deg, #7b91ee, #8a5cb5) !important;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .hamburger { display: flex; }
+
+  .nav-links {
+    display: none;
+    position: absolute;
+    top: 60px;
+    left: 0;
+    right: 0;
+    background: #1a1a2e;
+    flex-direction: column;
+    padding: 16px;
+    gap: 4px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  .nav-links.open { display: flex; }
+
+  .nav-links a {
+    padding: 12px 16px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .nav-spacer { display: none; }
+
+  .nav-user {
+    flex-direction: column;
+    border-left: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 16px 0 0;
+    margin: 8px 0 0;
+    width: 100%;
+  }
+
+  .nav-auth {
+    margin: 8px 0 0;
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .btn-nav {
+    text-align: center;
+    padding: 12px;
+  }
+}

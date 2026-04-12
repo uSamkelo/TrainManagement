@@ -1,0 +1,41 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-header">
+      <div class="logo">🚆</div>
+      <h1>Cape Town Metrorail</h1>
+      <p class="subtitle">Sign in to your account</p>
+    </div>
+
+    <div class="error-banner" *ngIf="error">
+      <span>⚠️</span> {{ error }}
+    </div>
+
+    <div class="login-form">
+      <div class="input-group">
+        <label>Email Address</label>
+        <input type="email" [(ngModel)]="email" placeholder="john.doe&#64;example.com"
+               (keyup.enter)="login()" autofocus>
+      </div>
+
+      <div class="input-group">
+        <label>Password</label>
+        <div class="password-wrapper">
+          <input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="password"
+                 placeholder="Enter your password" (keyup.enter)="login()">
+          <button class="toggle-vis" (click)="showPassword = !showPassword" type="button">
+            {{ showPassword ? '🙈' : '👁️' }}
+          </button>
+        </div>
+      </div>
+
+      <button class="btn-primary btn-full" (click)="login()" [disabled]="!email || !password || loading">
+        <span *ngIf="!loading">Sign In</span>
+        <span *ngIf="loading" class="spinner"></span>
+      </button>
+    </div>
+
+    <div class="login-footer">
+      Don't have an account? <a routerLink="/register">Create one</a>
+    </div>
+  </div>
+</div>

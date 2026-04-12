@@ -1,0 +1,97 @@
+<div class="tickets-container">
+  <h1 class="page-title">🎫 Purchase Tickets</h1>
+
+  <div class="loading" *ngIf="loading">Loading routes...</div>
+
+  <div class="error-banner" *ngIf="error">⚠️ {{ error }}</div>
+  <div class="success-banner" *ngIf="success">✅ {{ success }}</div>
+
+  <!-- Route Selection -->
+  <div class="section" *ngIf="!loading">
+    <h2>Select Route</h2>
+    <div class="route-grid">
+      <div *ngFor="let route of availability"
+           class="route-card"
+           [class.selected]="selectedRoute?.routeId === route.routeId"
+           (click)="selectRoute(route)">
+        <div class="route-name">{{ route.routeName }}</div>
+        <div class="route-stations">{{ route.stations.length }} stations</div>
+        <div class="route-price">From R{{ route.pricing['OnceOff'] | number:'1.2-2' }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ticket Configuration -->
+  <div class="section" *ngIf="selectedRoute">
+    <h2>Configure Ticket</h2>
+
+    <div class="config-grid">
+      <!-- Ticket Type -->
+      <div class="config-section">
+        <h3>Ticket Type</h3>
+        <div class="type-options">
+          <div *ngFor="let type of ticketTypes"
+               class="type-card"
+               [class.selected]="ticketType === type.value"
+               (click)="ticketType = type.value">
+            <span class="type-icon">{{ type.icon }}</span>
+            <div>
+              <strong>{{ type.label }}</strong>
+              <p>{{ type.desc }}</p>
+              <span class="type-price">R{{ selectedRoute.pricing[type.value] | number:'1.2-2' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stations -->
+      <div class="config-section">
+        <h3>Journey Details</h3>
+        <div class="station-selectors">
+          <div class="input-group">
+            <label>From Station</label>
+            <select [(ngModel)]="fromStation">
+              <option value="">Select departure...</option>
+              <option *ngFor="let s of selectedRoute.stations" [value]="s">{{ s }}</option>
+            </select>
+          </div>
+          <div class="station-arrow">→</div>
+          <div class="input-group">
+            <label>To Station</label>
+            <select [(ngModel)]="toStation">
+              <option value="">Select destination...</option>
+              <option *ngFor="let s of selectedRoute.stations" [value]="s" [disabled]="s === fromStation">{{ s }}</option>
+            </select>
+          </div>
+        </div>
+
+        <h3>Payment Method</h3>
+        <div class="payment-options">
+          <div *ngFor="let pm of paymentMethods"
+               class="payment-card"
+               [class.selected]="paymentMethod === pm.value"
+               (click)="paymentMethod = pm.value">
+            <span>{{ pm.icon }}</span>
+            <span>{{ pm.label }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Summary & Purchase -->
+    <div class="purchase-summary" *ngIf="canPurchase">
+      <div class="summary-details">
+        <div class="summary-row"><span>Route</span><span>{{ selectedRoute.routeName }}</span></div>
+        <div class="summary-row"><span>From</span><span>{{ fromStation }}</span></div>
+        <div class="summary-row"><span>To</span><span>{{ toStation }}</span></div>
+        <div class="summary-row"><span>Type</span><span>{{ ticketType }}</span></div>
+        <div class="summary-row"><span>Payment</span><span>{{ paymentMethod | titlecase }}</span></div>
+        <div class="summary-row total"><span>Total</span><span>R{{ selectedPrice | number:'1.2-2' }}</span></div>
+      </div>
+      <button class="btn-purchase" (click)="purchase()" [disabled]="purchasing">
+        <span *ngIf="!purchasing">Purchase Ticket — R{{ selectedPrice | number:'1.2-2' }}</span>
+        <span *ngIf="purchasing" class="spinner"></span>
+      </button>
+    </div>
+  </div>
+</div>

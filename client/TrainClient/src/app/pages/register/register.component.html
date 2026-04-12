@@ -1,0 +1,186 @@
+<div class="register-container">
+  <div class="register-card">
+    <!-- Header -->
+    <div class="register-header">
+      <div class="logo">🚆</div>
+      <h1>Cape Town Metrorail</h1>
+      <p class="subtitle">Create your account</p>
+    </div>
+
+    <!-- Step indicators -->
+    <div class="step-indicators">
+      <div class="step" [class.active]="currentStep >= 1" [class.done]="currentStep > 1">
+        <div class="step-circle">{{ currentStep > 1 ? '✓' : '1' }}</div>
+        <span>Select Role</span>
+      </div>
+      <div class="step-line" [class.active]="currentStep > 1"></div>
+      <div class="step" [class.active]="currentStep >= 2">
+        <div class="step-circle">2</div>
+        <span>Your Details</span>
+      </div>
+    </div>
+
+    <!-- Error message -->
+    <div class="error-banner" *ngIf="error">
+      <span class="error-icon">⚠️</span>
+      {{ error }}
+    </div>
+
+    <!-- STEP 1: Role Selection -->
+    <div class="step-content" *ngIf="currentStep === 1">
+      <h2 class="step-title">How will you use Metrorail?</h2>
+
+      <div class="role-grid">
+        <div *ngFor="let role of roles"
+             class="role-card"
+             [class.selected]="selectedRole === role.value"
+             [style.borderColor]="selectedRole === role.value ? role.color : 'transparent'"
+             (click)="selectRole(role.value)">
+          <div class="role-icon" [style.backgroundColor]="role.color + '20'">
+            <span>{{ role.icon }}</span>
+          </div>
+          <h3>{{ role.label }}</h3>
+          <p>{{ role.desc }}</p>
+          <div class="role-badge" *ngIf="role.requiresAuth">
+            <span class="badge-lock">🔒</span> Requires authorization
+          </div>
+          <div class="role-check" *ngIf="selectedRole === role.value" [style.backgroundColor]="role.color">
+            ✓
+          </div>
+        </div>
+      </div>
+
+      <!-- Staff authorization code -->
+      <div class="auth-code-section" *ngIf="isStaffRole">
+        <div class="auth-code-header">
+          <span class="lock-icon">🔐</span>
+          <div>
+            <h3>Authorization Required</h3>
+            <p>Enter the {{ selectedRoleInfo.label }} authorization code provided by your supervisor.</p>
+          </div>
+        </div>
+        <div class="input-group">
+          <input
+            [type]="showAdminCode ? 'text' : 'password'"
+            [(ngModel)]="adminCode"
+            placeholder="Enter authorization code"
+            class="auth-code-input"
+            [class.valid]="adminCode === STAFF_AUTH_CODES[selectedRole]"
+            [class.invalid]="adminCode.length > 0 && adminCode !== STAFF_AUTH_CODES[selectedRole]">
+          <button class="toggle-vis" (click)="showAdminCode = !showAdminCode" type="button">
+            {{ showAdminCode ? '🙈' : '👁️' }}
+          </button>
+        </div>
+        <p class="auth-hint" *ngIf="adminCode.length > 0 && adminCode !== STAFF_AUTH_CODES[selectedRole]">
+          Invalid authorization code
+        </p>
+        <p class="auth-success" *ngIf="adminCode === STAFF_AUTH_CODES[selectedRole]">
+          ✓ Authorization verified
+        </p>
+      </div>
+
+      <button class="btn-primary btn-full" (click)="nextStep()" [disabled]="!step1Valid">
+        Continue <span class="btn-arrow">→</span>
+      </button>
+    </div>
+
+    <!-- STEP 2: User Details -->
+    <div class="step-content" *ngIf="currentStep === 2">
+      <div class="selected-role-badge" [style.backgroundColor]="selectedRoleInfo.color + '15'" [style.borderColor]="selectedRoleInfo.color">
+        <span>{{ selectedRoleInfo.icon }}</span>
+        <span>Registering as <strong>{{ selectedRoleInfo.label }}</strong></span>
+        <button class="change-role" (click)="prevStep()">Change</button>
+      </div>
+
+      <div class="form-grid">
+        <div class="input-group">
+          <label>First Name</label>
+          <input type="text" [(ngModel)]="firstName" placeholder="John" required>
+        </div>
+        <div class="input-group">
+          <label>Last Name</label>
+          <input type="text" [(ngModel)]="lastName" placeholder="Doe" required>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label>Email Address</label>
+        <input type="email" [(ngModel)]="email" placeholder="john.doe&#64;example.com" required>
+      </div>
+
+      <div class="input-group">
+        <label>Password</label>
+        <div class="password-wrapper">
+          <input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="password"
+                 (input)="checkPasswordStrength()" placeholder="Minimum 8 characters" required>
+          <button class="toggle-vis" (click)="showPassword = !showPassword" type="button">
+            {{ showPassword ? '🙈' : '👁️' }}
+          </button>
+        </div>
+        <div class="password-strength" *ngIf="password.length > 0">
+          <div class="strength-bars">
+            <div *ngFor="let i of [1,2,3,4,5]" class="strength-bar"
+                 [style.backgroundColor]="i <= passwordStrength ? passwordStrengthColor : '#ecf0f1'"></div>
+          </div>
+          <span class="strength-label" [style.color]="passwordStrengthColor">{{ passwordStrengthLabel }}</span>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label>Confirm Password</label>
+        <input type="password" [(ngModel)]="confirmPassword" placeholder="Repeat your password" required>
+        <p class="field-error" *ngIf="confirmPassword && !passwordsMatch">Passwords do not match</p>
+      </div>
+
+      <div class="input-group">
+        <label>Phone Number <span class="optional">(optional)</span></label>
+        <input type="tel" [(ngModel)]="phoneNumber" placeholder="+27 XXX XXX XXXX">
+      </div>
+
+      <!-- Staff-specific fields -->
+      <div class="staff-fields" *ngIf="isStaffRole">
+        <div class="staff-divider">
+          <span>{{ selectedRoleInfo.label }} Details</span>
+        </div>
+
+        <div class="input-group">
+          <label>Employee ID</label>
+          <input type="text" [(ngModel)]="employeeId" placeholder="EMP-XXXXX">
+        </div>
+
+        <div class="input-group" *ngIf="needsStation">
+          <label>Assigned Station</label>
+          <select [(ngModel)]="assignedStationId" class="station-dropdown">
+            <option value="">Select a station...</option>
+            <option *ngFor="let station of stations" [value]="station.id">
+              {{ station.stationName }}
+            </option>
+          </select>
+        </div>
+
+        <div class="input-group" *ngIf="needsTrain">
+          <label>Assigned Train</label>
+          <select [(ngModel)]="assignedTrainId" class="station-dropdown">
+            <option value="">Select a train...</option>
+            <option *ngFor="let train of trainIds" [value]="train">
+              {{ train }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn-secondary" (click)="prevStep()">← Back</button>
+        <button class="btn-primary" (click)="register()" [disabled]="!step2Valid || loading">
+          <span *ngIf="!loading">Create Account</span>
+          <span *ngIf="loading" class="spinner"></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="register-footer">
+      Already have an account? <a routerLink="/login">Sign in</a>
+    </div>
+  </div>
+</div>
