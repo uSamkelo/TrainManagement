@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TrainTrackingService.Data;
 
@@ -11,9 +12,11 @@ using TrainTrackingService.Data;
 namespace TrainTrackingService.Migrations
 {
     [DbContext(typeof(TrainTrackingContext))]
-    partial class TrainTrackingContextModelSnapshot : ModelSnapshot
+    [Migration("20260412121712_AddRuntimeSeeding")]
+    partial class AddRuntimeSeeding
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -17,6 +17,7 @@ public class TrainSimulationHostedService : BackgroundService
         _logger.LogInformation("Train Simulation Hosted Service starting");
         try
         {
+            // The main simulation loop runs in TrainSimulationService.StartAsync()
             await _trainSimulationService.StartAsync();
         }
         catch (OperationCanceledException)

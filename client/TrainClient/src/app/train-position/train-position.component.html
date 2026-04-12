@@ -2,8 +2,62 @@
   <div class="train-info">
     <h1>Train Tracking Dashboard</h1>
     <p>Total Trains: <strong>{{ positions.length }}</strong></p>
+    <p class="legend">
+      <span class="legend-item"><span class="legend-icon">🚂</span> Train</span>
+      <span class="legend-item"><span class="legend-icon">🚉</span> Station</span>
+      <span class="legend-item"><span class="trail-sample"></span> Train Trail</span>
+    </p>
   </div>
-  
+
+  <!-- Station and Location Selection Controls -->
+  <div class="controls-panel">
+    <div class="control-group">
+      <label for="station-select" class="control-label">Select Station:</label>
+      <select
+        id="station-select"
+        [(ngModel)]="selectedStation"
+        (change)="selectStation(selectedStation)"
+        class="station-select"
+        [disabled]="isLoadingLocations"
+      >
+        <option value="">-- Choose a station --</option>
+        @for (station of stations; track station.id) {
+          <option [value]="station.stationName">{{ station.stationName }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="control-divider">or</div>
+
+    <div class="control-group">
+      <button
+        (click)="enableLocation()"
+        class="location-button"
+        [disabled]="isLoadingLocations"
+      >
+        <span *ngIf="!isLoadingLocations">📍 Use My Location</span>
+        <span *ngIf="isLoadingLocations">⏳ Getting Location...</span>
+      </button>
+      <p *ngIf="hasLocationPermission && latitude && longitude" class="location-info">
+        ✓ Your location: {{ latitude.toFixed(4) }}, {{ longitude.toFixed(4) }}
+      </p>
+    </div>
+  </div>
+
+  <!-- Next Arrival ETA Panel -->
+  @if (nextArrivalResult) {
+    <div class="eta-panel">
+      <h3>Next Train Arrival</h3>
+      <div class="eta-details">
+        <p><strong>Station:</strong> {{ nextArrivalResult.stationName }}</p>
+        <p><strong>Train:</strong> {{ nextArrivalResult.trainId }}</p>
+        <p><strong>Route:</strong> {{ nextArrivalResult.routeName }}</p>
+        <p><strong>Arrival Time:</strong> {{ nextArrivalResult.arrivalTime | date:'HH:mm' }}</p>
+        <p><strong>ETA:</strong> {{ nextArrivalResult.eta }}</p>
+      </div>
+    </div>
+  }
+
   <div id="map"></div>
   
   <div class="train-list">
@@ -18,12 +72,36 @@
         <hr class="train-card-divider">
         <div class="train-card-content">
           <p>
-            <strong>Location:</strong><br>
-            {{ position.latitude.toFixed(4) }}, {{ position.longitude.toFixed(4) }}
+            <strong>Route:</strong><br>
+            {{ getRouteInfo(position.trainId) }}
           </p>
+          <p>
+            <strong>Location:</strong><br>
+            {{ getLocationDisplay(position) }}
+          </p>
+          @if (position.currentStop) {
+            <p>
+              <strong>Current Stop:</strong> {{ position.currentStop }}
+            </p>
+          }
+          @if (position.nextStop) {
+            <p>
+              <strong>Next Stop:</strong> {{ position.nextStop }}
+            </p>
+          }
           <p>
             <strong>ETA:</strong> {{ position.eta }}
           </p>
+          @if (position.nextStopEta) {
+            <p>
+              <strong>ETA to Next Stop:</strong> {{ position.nextStopEta }}
+            </p>
+          }
+          @if (position.trail) {
+            <p>
+              <strong>Trail Points:</strong> {{ position.trail.length }}
+            </p>
+          }
         </div>
       </div>
     } @empty {

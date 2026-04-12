@@ -7,10 +7,10 @@ namespace TrainTrackingService.Data.DTOs
 {
     public class TrainPositionDTO
     {
-        public string TrainId { get; set; }
+        public string? TrainId { get; init; } = null;
         public double Latitude { get; set; }
         public double Longitude { get; set; }
-        public string Status { get; set; }
-        public string ETA { get; set; }
+        public string? Status { get; init; } = null;
+        public string? ETA { get; init; } = null;
     }
 }

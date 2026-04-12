@@ -1,15 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
 import { Subject } from 'rxjs';
-
-export interface TrainUpdate {
-  trainId: string;
-  latitude: number;
-  longitude: number;
-  status: string;
-  eta: string;
-  timestamp: string;
-}
+import { TrainUpdate } from '../interfaces/IPositions';
 
 @Injectable({
   providedIn: 'root'
@@ -21,8 +13,8 @@ export class SignalRService {
 
   constructor() {
     this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl('http://localhost:5176/trainhub')
-      .withAutomaticReconnect()
+      .withUrl('http://localhost:5176/train-update')
+      .withAutomaticReconnect([1000, 3000, 5000, 10000])
       .build();
 
     this.setupListeners();

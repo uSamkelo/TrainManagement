@@ -1,3 +1,5 @@
+#nullable enable
+
 using System.Text;
 using System.Text.Json;
 using RabbitMQ.Client;
@@ -9,15 +11,14 @@ public class TrainPublisher : ITrainPositionEventPublisher // Ensure the class n
     private IConnection? _connection;
     private IChannel? _channel;
 
-    // Rename this method so it doesn't match the class name
     public async Task InitializeAsync(IConfiguration configuration)
     {
         var factory = new ConnectionFactory
         {
-            HostName = configuration["RabbitMQ:HostName"],
+            HostName = configuration["RabbitMQ:HostName"] ?? "localhost",
             Port = int.TryParse(configuration["RabbitMQ:Port"], out var port) ? port : 5672,
-            UserName = configuration["RabbitMQ:UserName"],
-            Password = configuration["RabbitMQ:Password"]
+            UserName = configuration["RabbitMQ:UserName"] ?? "guest",
+            Password = configuration["RabbitMQ:Password"] ?? "guest"
         };
 
         _connection = await factory.CreateConnectionAsync();
