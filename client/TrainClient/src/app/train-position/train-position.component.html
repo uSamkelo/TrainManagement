@@ -1,0 +1,36 @@
+<div class="container">
+  <div class="train-info">
+    <h1>Train Tracking Dashboard</h1>
+    <p>Total Trains: <strong>{{ positions.length }}</strong></p>
+  </div>
+  
+  <div id="map"></div>
+  
+  <div class="train-list">
+    @for (position of positions; track position.trainId) {
+      <div class="train-card" [ngClass]="position.status.toLowerCase()">
+        <div class="train-card-header">
+          <h3 class="train-card-title">{{ position.trainId }}</h3>
+          <span class="train-status-badge" [ngClass]="position.status.toLowerCase()">
+            {{ position.status }}
+          </span>
+        </div>
+        <hr class="train-card-divider">
+        <div class="train-card-content">
+          <p>
+            <strong>Location:</strong><br>
+            {{ position.latitude.toFixed(4) }}, {{ position.longitude.toFixed(4) }}
+          </p>
+          <p>
+            <strong>ETA:</strong> {{ position.eta }}
+          </p>
+        </div>
+      </div>
+    } @empty {
+      <div class="empty-state">
+        <p>No train positions found.</p>
+      </div>
+    }
+  </div>
+</div>
+
