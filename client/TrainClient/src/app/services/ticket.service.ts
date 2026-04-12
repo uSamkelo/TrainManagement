@@ -36,4 +36,8 @@ export class TicketService {
   cancelTicket(id: string): Observable<any> {
     return this.http.post(`${this.apiUrl}/${id}/cancel`, {});
   }
+
+  regenerateQR(id: string): Observable<TicketDTO> {
+    return this.http.post<TicketDTO>(`${this.apiUrl}/${id}/regenerate-qr`, {});
+  }
 }

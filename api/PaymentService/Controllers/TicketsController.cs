@@ -75,6 +75,17 @@ namespace PaymentService.Controllers
             return Ok(new { message = "Ticket cancelled and refund initiated." });
         }
 
+        [HttpPost("{id:guid}/regenerate-qr")]
+        public async Task<IActionResult> RegenerateQR(Guid id)
+        {
+            var userId = GetUserId();
+            if (userId == null) return Unauthorized();
+
+            var ticket = await _ticketService.RegenerateQRCodeAsync(id, userId.Value);
+            if (ticket == null) return NotFound();
+            return Ok(ticket);
+        }
+
         [HttpGet("availability")]
         [AllowAnonymous]
         public async Task<IActionResult> GetAvailability(

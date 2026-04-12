@@ -28,9 +28,27 @@ export class MyTicketsComponent implements OnInit {
   loadTickets(): void {
     this.loading = true;
     this.ticketService.getMyTickets().subscribe({
-      next: (tickets) => { this.tickets = tickets; this.loading = false; },
+      next: (tickets) => {
+        this.tickets = tickets;
+        this.loading = false;
+        // Auto-regenerate QR codes for active tickets missing them
+        this.regenerateMissingQRCodes();
+      },
       error: () => { this.loading = false; this.error = 'Failed to load tickets.'; }
     });
+  }
+
+  private regenerateMissingQRCodes(): void {
+    const needsQR = this.tickets.filter(t => t.status === 'Active' && !t.qrCode);
+    for (const ticket of needsQR) {
+      this.ticketService.regenerateQR(ticket.id).subscribe({
+        next: (updated) => {
+          const idx = this.tickets.findIndex(t => t.id === updated.id);
+          if (idx !== -1) this.tickets[idx] = updated;
+        },
+        error: () => {} // QR service may still be unavailable
+      });
+    }
   }
 
   get filteredTickets(): TicketDTO[] {

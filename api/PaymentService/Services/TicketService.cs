@@ -158,6 +158,19 @@ namespace PaymentService.Services
             return true;
         }
 
+        public async Task<TicketDTO?> RegenerateQRCodeAsync(Guid ticketId, Guid userId)
+        {
+            var ticket = await _context.Tickets.FirstOrDefaultAsync(t => t.Id == ticketId && t.UserId == userId);
+            if (ticket == null || ticket.Status != TicketStatus.Active) return null;
+
+            ticket.QRCode = await RequestQRCodeAsync(ticket);
+            if (ticket.QRCode != null)
+            {
+                await _context.SaveChangesAsync();
+            }
+            return MapTicketToDTO(ticket);
+        }
+
         private decimal GetPrice(TicketType type)
         {
             return type switch

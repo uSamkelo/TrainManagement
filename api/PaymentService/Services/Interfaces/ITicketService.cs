@@ -10,5 +10,6 @@ namespace PaymentService.Services.Interfaces
         Task<List<TicketDTO>> GetActiveUserTicketsAsync(Guid userId);
         Task<bool> ValidateTicketAsync(Guid ticketId);
         Task<bool> CancelTicketAsync(Guid ticketId, Guid userId);
+        Task<TicketDTO?> RegenerateQRCodeAsync(Guid ticketId, Guid userId);
     }
 }
