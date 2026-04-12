@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/api/">
+    <Project Path="api/DataCoordinationService/DataCoordinationService.csproj" />
+    <Project Path="api/EventProcessingService/EventProcessingService.csproj" />
+    <Project Path="api/TrainTrackingService/TrainTrackingService.csproj" />
+  </Folder>
+</Solution>
+
+

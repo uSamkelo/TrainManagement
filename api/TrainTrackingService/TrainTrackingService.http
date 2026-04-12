@@ -1,0 +1,19 @@
+@TrainTrackingService_HostAddress = http://localhost:5176
+
+# GET {{TrainTrackingService_HostAddress}}/weatherforecast/
+# Accept: application/json
+
+GET {{TrainTrackingService_HostAddress}}/trainposition/
+Accept: application/json
+
+POST {{TrainTrackingService_HostAddress}}/trainposition/
+Content-Type: application/json
+
+{
+    "trainId": "Train123",
+    "latitude": 40.7128,
+    "longitude": -74.0060,
+    "timestamp": "2024-06-01T12:00:00Z"
+}
+
+###

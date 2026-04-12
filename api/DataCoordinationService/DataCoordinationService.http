@@ -1,0 +1,6 @@
+@DataCoordinationService_HostAddress = http://localhost:5297
+
+GET {{DataCoordinationService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
