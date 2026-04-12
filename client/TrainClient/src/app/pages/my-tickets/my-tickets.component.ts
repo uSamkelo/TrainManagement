@@ -74,4 +74,15 @@ export class MyTicketsComponent implements OnInit {
   isValid(ticket: TicketDTO): boolean {
     return new Date(ticket.validUntil) > new Date() && ticket.status === 'Active';
   }
+
+  getStationCode(stationName: string): string {
+    if (!stationName) return '---';
+    // Generate a 3-letter code from the station name
+    const words = stationName.replace(/['']/g, '').split(/[\s-]+/);
+    if (words.length === 1) {
+      return words[0].substring(0, 3).toUpperCase();
+    }
+    // Take first letter of each word, pad to 3
+    return words.map(w => w[0]).join('').substring(0, 3).toUpperCase();
+  }
 }

@@ -1,6 +1,6 @@
 <div class="my-tickets-container">
   <div class="page-header">
-    <h1>📋 My Tickets</h1>
+    <h1>🎫 My Tickets</h1>
     <a routerLink="/tickets" class="btn-buy">+ Buy New Ticket</a>
   </div>
 
@@ -19,55 +19,94 @@
     <a routerLink="/tickets">Purchase your first ticket</a>
   </div>
 
-  <!-- Ticket List -->
+  <!-- Ticket List - Boarding Pass Style -->
   <div class="ticket-list">
-    <div *ngFor="let ticket of filteredTickets"
-         class="ticket-card"
-         [class.expanded]="selectedTicket?.id === ticket.id"
-         (click)="viewTicket(ticket)">
-      <div class="ticket-main">
-        <div class="ticket-type-icon">{{ getTypeIcon(ticket.type) }}</div>
-        <div class="ticket-info">
-          <div class="ticket-route">{{ ticket.routeName }}</div>
-          <div class="ticket-journey">{{ ticket.fromStation }} → {{ ticket.toStation }}</div>
+    <div *ngFor="let ticket of filteredTickets" class="boarding-pass" [class.cancelled]="ticket.status === 'Cancelled' || ticket.status === 'Refunded'" [class.expired]="ticket.status === 'Expired'">
+
+      <!-- Left Section - Main Ticket -->
+      <div class="bp-main" (click)="viewTicket(ticket)">
+        <!-- Top Bar -->
+        <div class="bp-header">
+          <div class="bp-logo">
+            <span class="bp-logo-icon">🚂</span>
+            <span class="bp-logo-text">CAPE TOWN METRORAIL</span>
+          </div>
+          <span class="bp-badge" [style.backgroundColor]="getStatusColor(ticket.status)">{{ ticket.status }}</span>
         </div>
-        <div class="ticket-meta">
-          <span class="ticket-status" [style.backgroundColor]="getStatusColor(ticket.status)">
-            {{ ticket.status }}
-          </span>
-          <span class="ticket-price">R{{ ticket.price | number:'1.2-2' }}</span>
+
+        <!-- Route / Stations -->
+        <div class="bp-route">
+          <div class="bp-station">
+            <span class="bp-station-code">{{ getStationCode(ticket.fromStation) }}</span>
+            <span class="bp-station-name">{{ ticket.fromStation }}</span>
+          </div>
+          <div class="bp-route-line">
+            <div class="bp-dots"></div>
+            <span class="bp-train-icon">🚆</span>
+            <div class="bp-dots"></div>
+          </div>
+          <div class="bp-station">
+            <span class="bp-station-code">{{ getStationCode(ticket.toStation) }}</span>
+            <span class="bp-station-name">{{ ticket.toStation }}</span>
+          </div>
+        </div>
+
+        <!-- Info Grid -->
+        <div class="bp-info-grid">
+          <div class="bp-info-cell">
+            <span class="bp-label">ROUTE</span>
+            <span class="bp-value">{{ ticket.routeName }}</span>
+          </div>
+          <div class="bp-info-cell">
+            <span class="bp-label">TICKET TYPE</span>
+            <span class="bp-value">{{ ticket.type }}</span>
+          </div>
+          <div class="bp-info-cell">
+            <span class="bp-label">VALID FROM</span>
+            <span class="bp-value">{{ ticket.validFrom | date:'dd MMM yyyy' }}</span>
+          </div>
+          <div class="bp-info-cell">
+            <span class="bp-label">VALID UNTIL</span>
+            <span class="bp-value">{{ ticket.validUntil | date:'dd MMM yyyy' }}</span>
+          </div>
+        </div>
+
+        <!-- Bottom Strip -->
+        <div class="bp-footer">
+          <div class="bp-footer-item">
+            <span class="bp-label">ISSUED</span>
+            <span class="bp-footer-val">{{ ticket.createdAt | date:'dd MMM yyyy, HH:mm' }}</span>
+          </div>
+          <div class="bp-footer-item">
+            <span class="bp-label">FARE</span>
+            <span class="bp-price">R{{ ticket.price | number:'1.2-2' }}</span>
+          </div>
         </div>
       </div>
 
-      <!-- Expanded details -->
-      <div class="ticket-details" *ngIf="selectedTicket?.id === ticket.id">
-        <div class="detail-grid">
-          <div class="detail-item">
-            <span class="detail-label">Type</span>
-            <span class="detail-value">{{ ticket.type }}</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">Valid From</span>
-            <span class="detail-value">{{ ticket.validFrom | date:'medium' }}</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">Valid Until</span>
-            <span class="detail-value">{{ ticket.validUntil | date:'medium' }}</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">Purchased</span>
-            <span class="detail-value">{{ ticket.createdAt | date:'medium' }}</span>
-          </div>
-        </div>
+      <!-- Perforated Divider -->
+      <div class="bp-perforation"></div>
 
-        <!-- QR Code -->
-        <div class="qr-section" *ngIf="ticket.qrCode">
-          <img [src]="'data:image/png;base64,' + ticket.qrCode" alt="Ticket QR Code" class="qr-image">
-          <p class="qr-hint">Show this code for validation</p>
+      <!-- Right Section - QR Stub -->
+      <div class="bp-stub" (click)="viewTicket(ticket)">
+        <div class="bp-stub-route">
+          <span class="bp-stub-from">{{ getStationCode(ticket.fromStation) }}</span>
+          <span class="bp-stub-arrow">→</span>
+          <span class="bp-stub-to">{{ getStationCode(ticket.toStation) }}</span>
         </div>
+        <div class="bp-qr" *ngIf="ticket.qrCode">
+          <img [src]="'data:image/png;base64,' + ticket.qrCode" alt="QR Code" class="bp-qr-img">
+        </div>
+        <div class="bp-qr-placeholder" *ngIf="!ticket.qrCode">
+          <span>QR</span>
+        </div>
+        <span class="bp-scan-text">SCAN TO VALIDATE</span>
+      </div>
 
-        <button class="btn-cancel" *ngIf="isValid(ticket)" (click)="cancelTicket(ticket.id); $event.stopPropagation()">
-          Cancel & Refund
+      <!-- Cancel button (overlay, visible when expanded) -->
+      <div class="bp-actions" *ngIf="selectedTicket?.id === ticket.id && isValid(ticket)">
+        <button class="btn-cancel" (click)="cancelTicket(ticket.id); $event.stopPropagation()">
+          ✕ Cancel & Refund
         </button>
       </div>
     </div>

@@ -1,10 +1,6 @@
 using TrainTrackingService.Data;
 using TrainTrackingService.Models;
 using Microsoft.EntityFrameworkCore;
-using RabbitMQ.Client;
-using MassTransit;
-using RabbitMQ;
-using Microsoft.AspNetCore;
 using TrainTrackingService.Interfaces;
 using TrainTrackingService.Services.Interfaces;
 using TrainTrackingService.Services;
@@ -20,19 +16,6 @@ builder.Services.AddControllers();
 
 // Add SignalR for real-time updates
 builder.Services.AddSignalR();
-
-// Configure MassTransit with RabbitMQ
-builder.Services.AddMassTransit(x =>
-{
-    x.UsingRabbitMq((context, cfg) =>
-    {
-        cfg.Host(builder.Configuration["RabbitMQ:HostName"] ?? "localhost", "/", h =>
-        {
-            h.Username(builder.Configuration["RabbitMQ:UserName"] ?? "guest");
-            h.Password(builder.Configuration["RabbitMQ:Password"] ?? "guest");
-        });
-    });
-});
 
 
 

@@ -26,6 +26,10 @@ export class TrainPositionComponent implements OnInit, OnDestroy {
   private stationLayer = L.layerGroup();
   private destroy$ = new Subject<void>();
   
+  // Loading and error states
+  isLoading: boolean = true;
+  loadError: string | null = null;
+
   // Station and location selection
   selectedStation: string = '';
   selectedStationId: number | null = null;
@@ -78,21 +82,35 @@ export class TrainPositionComponent implements OnInit, OnDestroy {
     this.trainPositionService
       .getTrainPositions()
       .pipe(takeUntil(this.destroy$))
-      .subscribe((positions: IPosition[]) => {
-        console.log('Received positions:', positions);
-        this.positions = positions;
-        this.initializeRoutes();
-        this.updateMap();
-        this.fitMapBoundsToData(); // Fit bounds only on initial load
+      .subscribe({
+        next: (positions: IPosition[]) => {
+          console.log('Received positions:', positions);
+          this.positions = positions;
+          this.isLoading = false;
+          this.loadError = null;
+          this.initializeRoutes();
+          this.updateMap();
+          this.fitMapBoundsToData(); // Fit bounds only on initial load
+        },
+        error: (error) => {
+          console.error('Failed to load train positions:', error);
+          this.isLoading = false;
+          this.loadError = `Failed to load train positions: ${error.message || error.statusText || 'Unknown error'}`;
+        }
       });
 
     // Load stations from backend for dropdown
     this.trainPositionService
       .getStations()
       .pipe(takeUntil(this.destroy$))
-      .subscribe((stations: IStation[]) => {
-        console.log('Loaded stations:', stations);
-        this.stations = stations;
+      .subscribe({
+        next: (stations: IStation[]) => {
+          console.log('Loaded stations:', stations);
+          this.stations = stations;
+        },
+        error: (error) => {
+          console.error('Failed to load stations:', error);
+        }
       });
 
     // Connect to SignalR hub and subscribe to real-time updates
@@ -124,8 +142,12 @@ export class TrainPositionComponent implements OnInit, OnDestroy {
         this.positions.forEach((position) => {
           if (!this.routes.has(position.trainId)) {
             // Find the matching route from backend
+            // Position trainIds have format "RouteName_TXX", route trainIds are just "RouteName"
+            const routeId = position.trainId.includes('_')
+              ? position.trainId.substring(0, position.trainId.lastIndexOf('_'))
+              : position.trainId;
             const backendRoute = backendRoutes.find(
-              (r) => r.trainId === position.trainId,
+              (r) => r.trainId === routeId,
             );
 
             if (backendRoute) {

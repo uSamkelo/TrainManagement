@@ -1,7 +1,13 @@
 <div class="container">
   <div class="train-info">
     <h1>Train Tracking Dashboard</h1>
-    <p>Total Trains: <strong>{{ positions.length }}</strong></p>
+    @if (isLoading) {
+      <p>Loading train positions...</p>
+    } @else if (loadError) {
+      <p class="error-message" style="color: #e74c3c;">{{ loadError }}</p>
+    } @else {
+      <p>Total Trains: <strong>{{ positions.length }}</strong></p>
+    }
     <p class="legend">
       <span class="legend-item"><span class="legend-icon">🚂</span> Train</span>
       <span class="legend-item"><span class="legend-icon">🚉</span> Station</span>

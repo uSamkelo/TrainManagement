@@ -11,23 +11,31 @@ namespace TrainTrackingService.Data
     {
         public static async Task SeedAsync(TrainTrackingContext context)
         {
-            // Only seed if no routes exist yet
-            if (await context.TrainRoutes.AnyAsync())
-                return;
+            // Seed routes if none exist
+            if (!await context.TrainRoutes.AnyAsync())
+            {
+                var routes = GetRoutes();
+                context.TrainRoutes.AddRange(routes);
+                await context.SaveChangesAsync();
+            }
 
-            var routes = GetRoutes();
-            var stops = GetStops();
+            // Seed stops if none exist (may have been missed in a previous run)
+            if (!await context.TrainStops.AnyAsync())
+            {
+                var stops = GetStops();
+                context.TrainStops.AddRange(stops);
+                await context.SaveChangesAsync();
+            }
 
-            context.TrainRoutes.AddRange(routes);
-            await context.SaveChangesAsync();
-
-            context.TrainStops.AddRange(stops);
-            await context.SaveChangesAsync();
-
-            // Schedules include their ScheduleStops via navigation property
-            var (schedules, _) = BuildWeeklySchedules(routes, stops);
-            context.TrainSchedules.AddRange(schedules);
-            await context.SaveChangesAsync();
+            // Seed schedules if none exist
+            if (!await context.TrainSchedules.AnyAsync())
+            {
+                var routes = await context.TrainRoutes.ToListAsync();
+                var stops = await context.TrainStops.ToListAsync();
+                var (schedules, _) = BuildWeeklySchedules(routes, stops);
+                context.TrainSchedules.AddRange(schedules);
+                await context.SaveChangesAsync();
+            }
         }
 
         // ── Routes ─────────────────────────────────────────────────────────
